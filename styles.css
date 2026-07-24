@@ -118,6 +118,32 @@ main {
   font-size: 15px;
 }
 
+/* ---------- search ---------- */
+
+.search-row {
+  margin-bottom: 16px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.search-input::placeholder {
+  color: var(--text-dim);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent-dark);
+}
+
 /* ---------- sort controls ---------- */
 
 .controls-row {

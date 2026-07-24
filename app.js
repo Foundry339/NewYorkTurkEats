@@ -4,10 +4,29 @@
  */
 
 let currentSort = "date"; // "date" | "alpha"
+let searchQuery = "";
 let RESTAURANTS = [];
 
+function matchesSearch(restaurant, query) {
+  const haystack = [
+    restaurant.name,
+    restaurant.cuisine,
+    restaurant.address,
+    formatDate(restaurant.dateVisited),
+  ]
+    .join(" ")
+    .toLowerCase();
+  return haystack.includes(query);
+}
+
 function sortedRestaurants() {
-  const list = [...RESTAURANTS];
+  let list = [...RESTAURANTS];
+
+  const query = searchQuery.trim().toLowerCase();
+  if (query) {
+    list = list.filter((r) => matchesSearch(r, query));
+  }
+
   if (currentSort === "alpha") {
     list.sort((a, b) => a.name.localeCompare(b.name));
   } else {
@@ -44,12 +63,17 @@ function renderGrid() {
   const countEl = document.getElementById("result-count");
   const list = sortedRestaurants();
 
+  const existingEmptyState = grid.nextElementSibling;
+  if (existingEmptyState && existingEmptyState.classList.contains("empty-state")) {
+    existingEmptyState.remove();
+  }
+
   if (list.length === 0) {
     grid.innerHTML = "";
-    grid.insertAdjacentHTML(
-      "afterend",
-      `<div class="empty-state">No restaurants yet. Add rows to the sheet.</div>`
-    );
+    const message = searchQuery.trim()
+      ? "No restaurants match your search."
+      : "No restaurants yet. Add rows to the sheet.";
+    grid.insertAdjacentHTML("afterend", `<div class="empty-state">${message}</div>`);
     countEl.textContent = "0 restaurants";
     return;
   }
@@ -69,6 +93,11 @@ function setSort(sort) {
 document.addEventListener("DOMContentLoaded", async () => {
   document.querySelectorAll(".sort-btn").forEach((btn) => {
     btn.addEventListener("click", () => setSort(btn.dataset.sort));
+  });
+
+  document.getElementById("search-input").addEventListener("input", (e) => {
+    searchQuery = e.target.value;
+    renderGrid();
   });
 
   const grid = document.getElementById("grid");
