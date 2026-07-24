@@ -16,6 +16,7 @@
 html, body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 body {
@@ -96,6 +97,22 @@ a {
   width: 18px;
   height: 18px;
   fill: currentColor;
+}
+
+@media (max-width: 480px) {
+  .site-header {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .brand-tag {
+    display: none;
+  }
+
+  .social-btn {
+    width: 30px;
+    height: 30px;
+  }
 }
 
 /* ---------- layout ---------- */
