@@ -3,22 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AmericanTurkEats Directory — Every Restaurant TheAmericanTurk Has Visited</title>
+  <title>Interactive Map — AmericanTurkEats</title>
   <meta
     name="description"
-    content="Unofficial, fan-made directory of every restaurant featured by TheAmericanTurk, with links and video visits."
+    content="Every restaurant TheAmericanTurk has featured, pinned on one interactive map."
   />
   <link rel="stylesheet" href="styles.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
 </head>
 <body>
   <header class="site-header">
-    <div class="brand">
+    <a class="brand" href="index.html">
       AmericanTurk<span class="accent">Eats</span>
       <span class="brand-tag">unofficial fan directory</span>
-    </div>
+    </a>
     <div class="header-right">
       <nav class="site-nav">
-        <a class="nav-link" href="map.html">Interactive Map</a>
+        <a class="nav-link active" href="map.html">Interactive Map</a>
       </nav>
       <div class="socials">
         <a class="social-btn" href="https://www.instagram.com/newyorkturk" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
@@ -34,41 +39,28 @@
     </div>
   </header>
 
-  <main>
-    <h1 class="page-title">The Directory</h1>
+  <main class="map-page-main">
+    <h1 class="page-title">Interactive Map</h1>
     <p class="page-subtitle">
-      Every restaurant TheAmericanTurk has featured, in one browsable list.
+      Every restaurant TheAmericanTurk has featured, pinned on one map. Click a pin for details.
     </p>
 
-    <div class="search-row">
-      <input
-        type="search"
-        id="search-input"
-        class="search-input"
-        placeholder="Search by Restaurant, Restaurant Type, Date, or Address"
-      />
-    </div>
-
-    <div class="controls-row">
-      <div class="sort-group">
-        <button class="sort-btn active" data-sort="date">Recently Visited</button>
-        <button class="sort-btn" data-sort="alpha">A–Z</button>
-      </div>
-      <div class="result-count" id="result-count"></div>
-    </div>
-
-    <div class="grid" id="grid"></div>
+    <div id="leaflet-map" class="leaflet-map-container"></div>
   </main>
 
   <footer class="site-footer">
     AmericanTurkEats is an unofficial, fan-made database and is not affiliated with,
     endorsed by, or sponsored by TheAmericanTurk. Restaurant data on this
-    demo build is placeholder sample contents.
+    demo build is placeholder sample content.
   </footer>
 
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    crossorigin=""
+  ></script>
   <script src="data.js"></script>
   <script src="common.js"></script>
-  <script src="app.js"></script>
+  <script src="map.js"></script>
 
   <!-- Cloudflare Web Analytics -->
   <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d890537ab7254a7d83ee21854dff3ec1"}'></script>

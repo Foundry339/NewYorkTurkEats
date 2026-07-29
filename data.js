@@ -7,7 +7,7 @@
  *
  * Expected columns (in this order):
  *   Restaurant, Restaurant Type, Date Posted, Address, Video Link,
- *   Restaurant Website
+ *   Restaurant Website, Lat, Lon
  * ------------------------------------------------------------------
  */
 

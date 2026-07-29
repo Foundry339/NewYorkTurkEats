@@ -147,6 +147,8 @@ function parseCsv(text) {
 function restaurantFromCsvRow(record) {
   const name = record["Restaurant"] || "";
   const address = record["Address"] || "";
+  const lat = parseFloat(record["Lat"]);
+  const lon = parseFloat(record["Lon"]);
   return {
     slug: slugify(name),
     name,
@@ -157,6 +159,8 @@ function restaurantFromCsvRow(record) {
     website: record["Restaurant Website"] || "",
     videoPlatform: "youtube",
     videoId: youtubeIdFromLink(record["Video Link"] || ""),
+    lat: Number.isFinite(lat) ? lat : null,
+    lon: Number.isFinite(lon) ? lon : null,
   };
 }
 
