@@ -3,8 +3,11 @@
  * A-Z vs Recently Visited sort toggle.
  */
 
+const PAGE_SIZE = 30;
+
 let currentSort = "date"; // "date" | "alpha"
 let searchQuery = "";
+let currentPage = 1;
 let RESTAURANTS = [];
 
 function matchesSearch(restaurant, query) {
@@ -58,6 +61,33 @@ function cardHtml(restaurant, rank) {
   `;
 }
 
+function renderPagination(totalItems) {
+  const pagination = document.getElementById("pagination");
+  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+
+  if (totalPages <= 1) {
+    pagination.innerHTML = "";
+    return;
+  }
+
+  const pageButtons = Array.from({ length: totalPages }, (_, i) => i + 1)
+    .map(
+      (page) =>
+        `<button class="page-btn${page === currentPage ? " active" : ""}" data-page="${page}">${page}</button>`
+    )
+    .join("");
+
+  pagination.innerHTML = `
+    <button class="page-btn page-nav" data-page="${currentPage - 1}" ${currentPage === 1 ? "disabled" : ""}>&larr; Prev</button>
+    ${pageButtons}
+    <button class="page-btn page-nav" data-page="${currentPage + 1}" ${currentPage === totalPages ? "disabled" : ""}>Next &rarr;</button>
+  `;
+
+  pagination.querySelectorAll(".page-btn:not([disabled])").forEach((btn) => {
+    btn.addEventListener("click", () => setPage(Number(btn.dataset.page)));
+  });
+}
+
 function renderGrid() {
   const grid = document.getElementById("grid");
   const countEl = document.getElementById("result-count");
@@ -75,15 +105,31 @@ function renderGrid() {
       : "No restaurants yet. Add rows to the sheet.";
     grid.insertAdjacentHTML("afterend", `<div class="empty-state">${message}</div>`);
     countEl.textContent = "0 restaurants";
+    document.getElementById("pagination").innerHTML = "";
     return;
   }
 
-  grid.innerHTML = list.map((r, i) => cardHtml(r, i + 1)).join("");
-  countEl.textContent = `${list.length} restaurant${list.length === 1 ? "" : "s"}`;
+  const totalPages = Math.ceil(list.length / PAGE_SIZE);
+  currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageList = list.slice(start, start + PAGE_SIZE);
+
+  grid.innerHTML = pageList.map((r, i) => cardHtml(r, start + i + 1)).join("");
+  countEl.textContent = `${start + 1}–${start + pageList.length} of ${list.length} restaurant${list.length === 1 ? "" : "s"}`;
+
+  renderPagination(list.length);
+}
+
+function setPage(page) {
+  currentPage = page;
+  renderGrid();
+  document.getElementById("grid").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function setSort(sort) {
   currentSort = sort;
+  currentPage = 1;
   document
     .querySelectorAll(".sort-btn")
     .forEach((btn) => btn.classList.toggle("active", btn.dataset.sort === sort));
@@ -97,6 +143,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("search-input").addEventListener("input", (e) => {
     searchQuery = e.target.value;
+    currentPage = 1;
     renderGrid();
   });
 
