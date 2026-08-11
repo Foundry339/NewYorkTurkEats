@@ -373,6 +373,38 @@ main {
   padding-top: 8px;
 }
 
+@media (max-width: 480px) {
+  main {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .poster {
+    font-size: 30px;
+  }
+
+  .card-body {
+    padding: 10px 10px 12px;
+  }
+
+  .card-name {
+    font-size: 13.5px;
+  }
+
+  .card-meta {
+    font-size: 11px;
+  }
+
+  .card-date {
+    font-size: 10.5px;
+  }
+}
+
 /* ---------- interactive map page ---------- */
 
 .map-page-main {
