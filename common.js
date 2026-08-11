@@ -172,3 +172,26 @@ async function loadRestaurants() {
   const text = await response.text();
   return parseCsv(text).map(restaurantFromCsvRow).filter((r) => r.name);
 }
+
+// ---------- mobile nav (hamburger dropdown) ----------
+
+function initMobileNav() {
+  const toggle = document.getElementById("menu-toggle");
+  const nav = document.getElementById("mobile-nav");
+  if (!toggle || !nav) return;
+
+  toggle.addEventListener("click", () => {
+    const isOpen = toggle.getAttribute("aria-expanded") === "true";
+    nav.hidden = isOpen;
+    toggle.setAttribute("aria-expanded", String(!isOpen));
+  });
+
+  document.addEventListener("click", (e) => {
+    if (nav.hidden) return;
+    if (nav.contains(e.target) || toggle.contains(e.target)) return;
+    nav.hidden = true;
+    toggle.setAttribute("aria-expanded", "false");
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initMobileNav);
