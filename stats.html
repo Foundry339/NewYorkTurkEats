@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NewYorkTurkEats Directory — Every Restaurant the NewYorkTurk Has Visited</title>
+  <title>Stats — NewYorkTurkEats</title>
   <meta
     name="description"
-    content="Unofficial, fan-made directory of every restaurant featured by the NewYorkTurk, with links and video visits."
+    content="A running tally of every restaurant NewYorkTurk has featured — total visited, breakdown by cuisine, breakdown by borough, and visits over time."
   />
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="favicon.ico" sizes="any" />
@@ -19,15 +19,15 @@
 </head>
 <body>
   <header class="site-header">
-    <div class="brand">
+    <a class="brand" href="index.html">
       <img class="brand-logo" src="images/android-chrome-192x192.png" alt="NewYorkTurkEats logo" />
       NewYorkTurk<span class="accent">Eats</span>
       <span class="brand-tag">unofficial fan directory</span>
-    </div>
+    </a>
     <div class="header-right">
       <nav class="site-nav">
         <a class="nav-link" href="map.html">Interactive Map</a>
-        <a class="nav-link" href="stats.html">Stats</a>
+        <a class="nav-link active" href="stats.html">Stats</a>
       </nav>
       <div class="socials">
         <a class="social-btn" href="https://www.instagram.com/newyorkturk" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
@@ -44,40 +44,24 @@
   </header>
 
   <main>
-    <h1 class="page-title">The Directory</h1>
+    <h1 class="page-title">Stats</h1>
     <p class="page-subtitle">
-      Every restaurant NewYorkTurk has featured, in one browsable list.
+      A running tally of everywhere NewYorkTurk has eaten.
     </p>
 
-    <div class="search-row">
-      <input
-        type="search"
-        id="search-input"
-        class="search-input"
-        placeholder="Search by Restaurant, Restaurant Type, Date, or Address"
-      />
+    <div class="stats-grid" id="stats-grid">
+      <div class="empty-state">Loading stats…</div>
     </div>
-
-    <div class="controls-row">
-      <div class="sort-group">
-        <button class="sort-btn active" data-sort="date">Recently Visited</button>
-        <button class="sort-btn" data-sort="alpha">A–Z</button>
-      </div>
-      <div class="result-count" id="result-count"></div>
-    </div>
-
-    <div class="grid" id="grid"></div>
-    <div class="pagination" id="pagination"></div>
   </main>
 
   <footer class="site-footer">
     NewYorkTurkEats is an unofficial, fan-made database and is not affiliated with,
-    endorsed by, or sponsored by the NewYorkTurk. Powered by Foundry339.
+    endorsed by, or sponsored by TheAmericanTurk.
   </footer>
 
   <script src="data.js"></script>
   <script src="common.js"></script>
-  <script src="app.js"></script>
+  <script src="stats.js"></script>
 
   <!-- Cloudflare Web Analytics -->
   <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d890537ab7254a7d83ee21854dff3ec1"}'></script>

@@ -632,3 +632,230 @@ main {
   padding: 60px 20px;
   color: var(--text-dim);
 }
+
+/* ---------- stats page ---------- */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.stat-tile {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 22px 22px;
+}
+
+.stat-tile-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.stat-tile-subtitle {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+}
+
+/* -- hero tile -- */
+
+.stat-tile--hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-value {
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: proportional-nums;
+}
+
+.stat-label {
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.stat-caption {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+
+/* -- bar list tile -- */
+
+.bar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 96px 1fr 34px;
+  align-items: center;
+  gap: 10px;
+  border-radius: 6px;
+  outline: none;
+}
+
+.bar-label {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-track {
+  height: 10px;
+  background: var(--bg-raised);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+
+.bar-value {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar-row:hover .bar-fill,
+.bar-row:focus-visible .bar-fill {
+  background: #ffd84d;
+}
+
+.bar-row:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-dark);
+}
+
+/* -- trend tile -- */
+
+.stat-tile--trend {
+  grid-column: 1 / -1;
+}
+
+.trend-chart-wrap {
+  position: relative;
+  margin-top: 6px;
+}
+
+.trend-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.trend-baseline {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.trend-area {
+  fill: var(--accent);
+  fill-opacity: 0.1;
+  stroke: none;
+}
+
+.trend-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.trend-tick {
+  fill: var(--text-dim);
+  font-size: 10px;
+  text-anchor: middle;
+}
+
+.trend-marker {
+  fill: var(--accent);
+  stroke: var(--bg-card);
+  stroke-width: 2;
+}
+
+.trend-point-label {
+  fill: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.trend-crosshair {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.trend-hover-dot {
+  fill: var(--accent);
+  stroke: var(--bg-card);
+  stroke-width: 2;
+}
+
+.trend-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.trend-hit:focus-visible {
+  outline: none;
+  fill: rgba(245, 197, 24, 0.06);
+}
+
+.trend-tooltip {
+  position: absolute;
+  top: 4px;
+  pointer-events: none;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.trend-tooltip-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.trend-tooltip-label {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-value {
+    font-size: 42px;
+  }
+
+  .bar-row {
+    grid-template-columns: 78px 1fr 28px;
+  }
+}
