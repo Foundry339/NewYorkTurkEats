@@ -4,8 +4,6 @@
  * over time) and renders them as plain HTML/SVG — no chart library.
  */
 
-const BAR_LIST_LIMIT = 8;
-
 // NYC ZIP-code-prefix -> borough. Free-text city names in the sheet's
 // addresses are inconsistent (neighborhood names, missing commas,
 // concatenated strings), but the ZIP code nearly always survives, so
@@ -158,11 +156,12 @@ function heroTile(total, sinceLabel) {
   return tile;
 }
 
-function barListTile(title, rows, total) {
+function barListTile(title, rows, total, options) {
+  const { scrollable = false } = options || {};
   const tile = el("div", "stat-tile stat-tile--barlist");
   tile.appendChild(el("div", "stat-tile-title", title));
 
-  const list = el("div", "bar-list");
+  const list = el("div", scrollable ? "bar-list bar-list--scroll" : "bar-list");
   const max = Math.max(...rows.map(([, count]) => count), 1);
 
   rows.forEach(([label, count]) => {
@@ -183,6 +182,17 @@ function barListTile(title, rows, total) {
     list.appendChild(row);
   });
 
+  if (scrollable) {
+    // The bottom fade hints "more below" — but once actually scrolled to
+    // the end, the true last row shouldn't stay dimmed.
+    const updateFade = () => {
+      const atBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 2;
+      list.classList.toggle("bar-list--at-bottom", atBottom);
+    };
+    list.addEventListener("scroll", updateFade);
+    requestAnimationFrame(updateFade);
+  }
+
   tile.appendChild(list);
   return tile;
 }
@@ -197,7 +207,7 @@ function svgEl(tag, attrs) {
 function trendTile(series) {
   const tile = el("div", "stat-tile stat-tile--trend");
   tile.appendChild(el("div", "stat-tile-title", "Visits Over Time"));
-  tile.appendChild(el("div", "stat-tile-subtitle", "Updates automatically as new visits are logged."));
+  tile.appendChild(el("div", "stat-tile-subtitle", "Since March 2023"));
 
   const W = 640;
   const H = 200;
@@ -354,8 +364,8 @@ function renderStats(restaurants) {
 
   container.appendChild(heroTile(restaurants.length, sinceLabel));
 
-  const cuisineRows = topCounts(restaurants, (r) => splitCuisineTags(r.cuisine), BAR_LIST_LIMIT);
-  container.appendChild(barListTile("Breakdown by Cuisine", cuisineRows, restaurants.length));
+  const cuisineRows = topCounts(restaurants, (r) => splitCuisineTags(r.cuisine), null);
+  container.appendChild(barListTile("Breakdown by Cuisine", cuisineRows, restaurants.length, { scrollable: true }));
 
   const boroughRows = boroughCounts(restaurants);
   container.appendChild(barListTile("Breakdown by Borough", boroughRows, restaurants.length));
