@@ -75,11 +75,15 @@ function boroughCounts(restaurants) {
   return rows;
 }
 
-function topCounts(items, keyFn, limit) {
+// keysFn returns an array of tags for one item — an item can increment
+// more than one bucket (e.g. "Halal/Burgers" counts toward both), so
+// bucket totals are tag frequency, not a strict partition of `items`.
+function topCounts(items, keysFn, limit) {
   const counts = new Map();
   items.forEach((item) => {
-    const key = keyFn(item) || "Unknown";
-    counts.set(key, (counts.get(key) || 0) + 1);
+    const keys = keysFn(item);
+    const tags = keys.length ? keys : ["Unknown"];
+    tags.forEach((key) => counts.set(key, (counts.get(key) || 0) + 1));
   });
   const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
   if (!limit || sorted.length <= limit) return sorted;
@@ -87,6 +91,17 @@ function topCounts(items, keyFn, limit) {
   const otherTotal = sorted.slice(limit).reduce((sum, [, c]) => sum + c, 0);
   if (otherTotal > 0) top.push(["Other", otherTotal]);
   return top;
+}
+
+// "Halal - Burgers" -> ["Halal", "Burgers"]. Splits only on " - "
+// (space-hyphen-space), the sheet's separator for genuine multi-tag
+// entries; single fused-name cuisines with no hyphen ("French
+// Steakhouse", "Korean Fried Chicken", "Upscale American") stay intact.
+function splitCuisineTags(cuisine) {
+  return (cuisine || "")
+    .split(" - ")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
 }
 
 function monthKey(dateStr) {
@@ -339,7 +354,7 @@ function renderStats(restaurants) {
 
   container.appendChild(heroTile(restaurants.length, sinceLabel));
 
-  const cuisineRows = topCounts(restaurants, (r) => r.cuisine, BAR_LIST_LIMIT);
+  const cuisineRows = topCounts(restaurants, (r) => splitCuisineTags(r.cuisine), BAR_LIST_LIMIT);
   container.appendChild(barListTile("Breakdown by Cuisine", cuisineRows, restaurants.length));
 
   const boroughRows = boroughCounts(restaurants);
