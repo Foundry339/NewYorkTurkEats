@@ -1,0 +1,31 @@
+name: Update sitemap
+
+"on":
+  schedule:
+    - cron: "0 12 * * 1" # every Monday at 12:00 UTC
+  workflow_dispatch: {} # lets you trigger a run manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update-sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Regenerate sitemap.xml from the live sheet
+        run: python3 generate-sitemap.py
+
+      - name: Commit if sitemap.xml changed
+        run: |
+          if git diff --quiet -- sitemap.xml; then
+            echo "No changes to sitemap.xml — skipping commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sitemap.xml
+          git commit -m "Update sitemap.xml"
+          git push
