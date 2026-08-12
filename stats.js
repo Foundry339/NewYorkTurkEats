@@ -106,6 +106,22 @@ function monthKey(dateStr) {
   return dateStr ? dateStr.slice(0, 7) : null; // "YYYY-MM"
 }
 
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+// Kept in calendar order (not sorted by count) — the point of this tile
+// is the weekly shape, same reason a day-of-week chart stays Sun->Sat.
+function dayOfWeekCounts(restaurants) {
+  const counts = new Map(DAY_NAMES.map((d) => [d, 0]));
+  restaurants.forEach((r) => {
+    if (!r.dateVisited) return;
+    const d = new Date(`${r.dateVisited}T00:00:00`);
+    if (isNaN(d.getTime())) return;
+    const day = DAY_NAMES[d.getDay()];
+    counts.set(day, counts.get(day) + 1);
+  });
+  return DAY_NAMES.map((d) => [d, counts.get(d)]);
+}
+
 function monthLabel(key) {
   const [y, m] = key.split("-").map(Number);
   return new Date(y, m - 1, 1).toLocaleDateString("en-US", { month: "short", year: "numeric" });
@@ -156,10 +172,124 @@ function heroTile(total, sinceLabel) {
   return tile;
 }
 
+// Decorative only (not data) — a hand-placed confetti scatter, so the
+// categorical-hue rules that govern data marks elsewhere don't apply here.
+const CONFETTI_COLORS = ["#f5c518", "#ff6b9d", "#5ee6c8", "#c084fc", "#ffa552"];
+
+function confettiOverlay() {
+  const svg = svgEl("svg", {
+    viewBox: "0 0 300 140",
+    preserveAspectRatio: "none",
+    class: "milestone-confetti",
+    "aria-hidden": "true",
+  });
+
+  // Kept to a top band (y <= 36) — the number/label/meter/caption occupy
+  // the full width lower down, so pieces there would sit on top of text.
+  const pieces = [
+    { type: "rect", x: 18, y: 14, w: 10, h: 6, rot: -18, color: 0 },
+    { type: "circle", x: 46, y: 10, r: 4, color: 1 },
+    { type: "rect", x: 70, y: 24, w: 8, h: 8, rot: 30, color: 2 },
+    { type: "circle", x: 100, y: 12, r: 3.5, color: 3 },
+    { type: "rect", x: 250, y: 12, w: 10, h: 6, rot: 15, color: 3 },
+    { type: "circle", x: 276, y: 26, r: 5, color: 0 },
+    { type: "rect", x: 228, y: 30, w: 8, h: 8, rot: -25, color: 4 },
+    { type: "circle", x: 130, y: 28, r: 4, color: 2 },
+    { type: "rect", x: 8, y: 30, w: 7, h: 7, rot: 40, color: 4 },
+    { type: "circle", x: 292, y: 8, r: 3.5, color: 1 },
+    { type: "circle", x: 150, y: 6, r: 3.5, color: 2 },
+    { type: "rect", x: 190, y: 20, w: 8, h: 6, rot: 10, color: 0 },
+  ];
+
+  pieces.forEach((p) => {
+    const color = CONFETTI_COLORS[p.color];
+    if (p.type === "circle") {
+      svg.appendChild(svgEl("circle", { cx: p.x, cy: p.y, r: p.r, fill: color, opacity: "0.85" }));
+    } else {
+      svg.appendChild(
+        svgEl("rect", {
+          x: -p.w / 2,
+          y: -p.h / 2,
+          width: p.w,
+          height: p.h,
+          rx: 1.5,
+          fill: color,
+          opacity: "0.85",
+          transform: `translate(${p.x} ${p.y}) rotate(${p.rot})`,
+        })
+      );
+    }
+  });
+
+  return svg;
+}
+
+function milestoneTile(total, target) {
+  const remaining = Math.max(target - total, 0);
+  const reached = total >= target;
+  const pct = Math.min((total / target) * 100, 100);
+
+  const tile = el("div", "stat-tile stat-tile--milestone");
+  tile.appendChild(confettiOverlay());
+
+  const content = el("div", "milestone-content");
+  if (reached) {
+    content.appendChild(el("div", "stat-value", String(total)));
+    content.appendChild(el("div", "stat-label", `${target}-Restaurant Milestone Reached!`));
+  } else {
+    content.appendChild(el("div", "stat-value", String(remaining)));
+    content.appendChild(el("div", "stat-label", `Restaurant${remaining === 1 ? "" : "s"} Until ${target}`));
+  }
+
+  const meter = el("div", "milestone-meter");
+  const fill = el("div", "milestone-meter-fill");
+  fill.style.width = `${pct}%`;
+  meter.appendChild(fill);
+  content.appendChild(meter);
+  content.appendChild(el("div", "stat-caption", `${total} of ${target} restaurants`));
+
+  tile.appendChild(content);
+  return tile;
+}
+
+function recentVisitTile(restaurant) {
+  const tile = el("div", "stat-tile stat-tile--recent");
+  tile.appendChild(el("div", "stat-tile-title", "Most Recent Visit"));
+
+  const card = document.createElement("a");
+  card.className = "recent-card";
+  card.href = `restaurant.html?slug=${encodeURIComponent(restaurant.slug)}`;
+
+  const poster = el("div", "recent-poster");
+  poster.style.background = posterGradient(restaurant.slug);
+  poster.textContent = initialsFor(restaurant.name);
+  if (restaurant.videoPlatform === "youtube" && restaurant.videoId) {
+    const img = document.createElement("img");
+    img.className = "recent-poster-img";
+    img.src = `https://img.youtube.com/vi/${restaurant.videoId}/hqdefault.jpg`;
+    img.alt = "";
+    img.loading = "lazy";
+    img.addEventListener("error", () => img.remove());
+    poster.appendChild(img);
+  }
+  card.appendChild(poster);
+
+  const info = el("div", "recent-info");
+  info.appendChild(el("div", "recent-name", restaurant.name));
+  const metaText = [restaurant.cuisine, restaurant.city].filter(Boolean).join(" · ");
+  if (metaText) info.appendChild(el("div", "recent-meta", metaText));
+  info.appendChild(el("div", "recent-date", `Posted ${formatDate(restaurant.dateVisited)}`));
+  card.appendChild(info);
+
+  tile.appendChild(card);
+  return tile;
+}
+
 function barListTile(title, rows, total, options) {
-  const { scrollable = false } = options || {};
+  const { scrollable = false, subtitle = null } = options || {};
   const tile = el("div", "stat-tile stat-tile--barlist");
   tile.appendChild(el("div", "stat-tile-title", title));
+  if (subtitle) tile.appendChild(el("div", "stat-tile-subtitle", subtitle));
 
   const list = el("div", scrollable ? "bar-list bar-list--scroll" : "bar-list");
   const max = Math.max(...rows.map(([, count]) => count), 1);
@@ -363,6 +493,17 @@ function renderStats(restaurants) {
   const sinceLabel = sorted.length ? monthLabel(monthKey(sorted[0].dateVisited)) : null;
 
   container.appendChild(heroTile(restaurants.length, sinceLabel));
+
+  container.appendChild(milestoneTile(restaurants.length, 200));
+
+  if (sorted.length) {
+    container.appendChild(recentVisitTile(sorted[sorted.length - 1]));
+  }
+
+  const dayRows = dayOfWeekCounts(restaurants);
+  const busiestDay = dayRows.reduce((best, row) => (row[1] > best[1] ? row : best), dayRows[0]);
+  const daySubtitle = busiestDay[1] > 0 ? `Most visits land on ${busiestDay[0]}s` : null;
+  container.appendChild(barListTile("Busiest Day of the Week", dayRows, restaurants.length, { subtitle: daySubtitle }));
 
   const cuisineRows = topCounts(restaurants, (r) => splitCuisineTags(r.cuisine), null);
   container.appendChild(barListTile("Breakdown by Cuisine", cuisineRows, restaurants.length, { scrollable: true }));

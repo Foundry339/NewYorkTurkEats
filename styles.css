@@ -754,6 +754,112 @@ main {
   color: var(--text-dim);
 }
 
+/* -- milestone tile -- */
+
+.stat-tile--milestone {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.milestone-confetti {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.milestone-content {
+  position: relative;
+  z-index: 1;
+}
+
+.milestone-meter {
+  margin-top: 14px;
+  height: 10px;
+  background: var(--bg-raised);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.milestone-meter-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* -- most recent visit tile -- */
+
+.recent-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  border-radius: 8px;
+  padding: 4px;
+  margin: 14px -4px -4px;
+  transition: background 0.15s ease;
+}
+
+.recent-card:hover,
+.recent-card:focus-visible {
+  background: var(--bg-raised);
+}
+
+.recent-poster {
+  position: relative;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.recent-poster-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recent-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.recent-name {
+  font-size: 15px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-meta {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-date {
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+
 /* -- bar list tile -- */
 
 .bar-list {
