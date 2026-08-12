@@ -93,6 +93,51 @@ function setSocialTags({ title, description, url, imageUrl, wideImage }) {
   setMetaTag("name", "twitter:image", imageUrl);
 }
 
+function setCanonical(url) {
+  let tag = document.querySelector('link[rel="canonical"]');
+  if (!tag) {
+    tag = document.createElement("link");
+    tag.setAttribute("rel", "canonical");
+    document.head.appendChild(tag);
+  }
+  tag.setAttribute("href", url);
+}
+
+// JSON.stringify + textContent (not innerHTML) so nothing in restaurant
+// data — names, addresses — can break out of the script tag.
+function setStructuredData(data) {
+  let tag = document.querySelector('script[type="application/ld+json"]');
+  if (!tag) {
+    tag = document.createElement("script");
+    tag.type = "application/ld+json";
+    document.head.appendChild(tag);
+  }
+  tag.textContent = JSON.stringify(data);
+}
+
+function structuredDataFor(restaurant, url) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    name: restaurant.name,
+    url,
+  };
+  if (restaurant.cuisine) data.servesCuisine = restaurant.cuisine;
+  if (restaurant.address) data.address = restaurant.address;
+  if (restaurant.website) data.sameAs = restaurant.website;
+  if (Number.isFinite(restaurant.lat) && Number.isFinite(restaurant.lon)) {
+    data.geo = {
+      "@type": "GeoCoordinates",
+      latitude: restaurant.lat,
+      longitude: restaurant.lon,
+    };
+  }
+  if (restaurant.videoPlatform === "youtube" && restaurant.videoId) {
+    data.image = `https://img.youtube.com/vi/${restaurant.videoId}/hqdefault.jpg`;
+  }
+  return data;
+}
+
 async function render() {
   const app = document.getElementById("app");
   app.innerHTML = `<div class="empty-state">Loading…</div>`;
@@ -107,6 +152,7 @@ async function render() {
     document.title = "NewYorkTurkEats";
     const errorDescription = "Couldn't load restaurant data from the NewYorkTurkEats directory. Please refresh to try again.";
     setMetaDescription(errorDescription);
+    setCanonical(`${SITE_URL}/restaurant.html`);
     setSocialTags({
       title: "NewYorkTurkEats",
       description: errorDescription,
@@ -130,6 +176,7 @@ async function render() {
     document.title = "Not found — NewYorkTurkEats";
     const notFoundDescription = "This restaurant couldn't be found in the NewYorkTurkEats directory. It may have been removed from the sheet.";
     setMetaDescription(notFoundDescription);
+    setCanonical(`${SITE_URL}/restaurant.html`);
     setSocialTags({
       title: "Not found — NewYorkTurkEats",
       description: notFoundDescription,
@@ -142,6 +189,7 @@ async function render() {
 
   const pageTitle = `${restaurant.name} — NewYorkTurkEats`;
   const pageDescription = metaDescriptionFor(restaurant);
+  const pageUrl = `${SITE_URL}/restaurant.html?slug=${encodeURIComponent(restaurant.slug)}`;
   const shareImage =
     restaurant.videoPlatform === "youtube" && restaurant.videoId
       ? `https://img.youtube.com/vi/${restaurant.videoId}/hqdefault.jpg`
@@ -149,10 +197,12 @@ async function render() {
 
   document.title = pageTitle;
   setMetaDescription(pageDescription);
+  setCanonical(pageUrl);
+  setStructuredData(structuredDataFor(restaurant, pageUrl));
   setSocialTags({
     title: pageTitle,
     description: pageDescription,
-    url: `${SITE_URL}/restaurant.html?slug=${encodeURIComponent(restaurant.slug)}`,
+    url: pageUrl,
     imageUrl: shareImage,
     wideImage: shareImage !== DEFAULT_SHARE_IMAGE,
   });

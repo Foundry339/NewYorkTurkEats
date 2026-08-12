@@ -38,12 +38,16 @@ function sortedRestaurants() {
   return list;
 }
 
+function escapeAttr(str) {
+  return String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+}
+
 function cardHtml(restaurant, rank) {
   const gradient = posterGradient(restaurant.slug);
   const initials = initialsFor(restaurant.name);
   const thumbnail =
     restaurant.videoPlatform === "youtube" && restaurant.videoId
-      ? `<img class="poster-img" src="https://img.youtube.com/vi/${restaurant.videoId}/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()" />`
+      ? `<img class="poster-img" src="https://img.youtube.com/vi/${restaurant.videoId}/hqdefault.jpg" alt="${escapeAttr(restaurant.name)}" loading="lazy" onerror="this.remove()" />`
       : "";
   return `
     <a class="card" href="restaurant.html?slug=${encodeURIComponent(restaurant.slug)}">
