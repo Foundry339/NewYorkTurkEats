@@ -58,6 +58,21 @@ function mapSectionHtml(restaurant) {
 
 let RESTAURANTS = [];
 
+function setMetaDescription(text) {
+  let tag = document.querySelector('meta[name="description"]');
+  if (!tag) {
+    tag = document.createElement("meta");
+    tag.setAttribute("name", "description");
+    document.head.appendChild(tag);
+  }
+  tag.setAttribute("content", text);
+}
+
+function metaDescriptionFor(restaurant) {
+  const context = [restaurant.cuisine, restaurant.city].filter(Boolean).join(" in ");
+  return `${restaurant.name}${context ? ` — ${context}` : ""}, featured by NewYorkTurk. Watch the video, see the address, and get directions.`;
+}
+
 async function render() {
   const app = document.getElementById("app");
   app.innerHTML = `<div class="empty-state">Loading…</div>`;
@@ -69,7 +84,8 @@ async function render() {
       <a class="back-link" href="index.html">← Back to directory</a>
       <div class="empty-state">Couldn't load restaurant data. Please refresh to try again.</div>
     `;
-    document.title = "AmericanTurkEats";
+    document.title = "NewYorkTurkEats";
+    setMetaDescription("Couldn't load restaurant data from the NewYorkTurkEats directory. Please refresh to try again.");
     return;
   }
 
@@ -83,11 +99,13 @@ async function render() {
         Couldn't find that restaurant. It may have been removed from the sheet.
       </div>
     `;
-    document.title = "Not found — AmericanTurkEats";
+    document.title = "Not found — NewYorkTurkEats";
+    setMetaDescription("This restaurant couldn't be found in the NewYorkTurkEats directory. It may have been removed from the sheet.");
     return;
   }
 
-  document.title = `${restaurant.name} — AmericanTurkEats`;
+  document.title = `${restaurant.name} — NewYorkTurkEats`;
+  setMetaDescription(metaDescriptionFor(restaurant));
 
   app.innerHTML = `
     <a class="back-link" href="index.html">← Back to directory</a>
