@@ -173,7 +173,7 @@ async function render() {
         Couldn't find that restaurant. It may have been removed from the sheet.
       </div>
     `;
-    document.title = "Not found — NewYorkTurkEats";
+    document.title = "Not found - NewYorkTurkEats";
     const notFoundDescription = "This restaurant couldn't be found in the NewYorkTurkEats directory. It may have been removed from the sheet.";
     setMetaDescription(notFoundDescription);
     setCanonical(`${SITE_URL}/restaurant.html`);
@@ -187,7 +187,7 @@ async function render() {
     return;
   }
 
-  const pageTitle = `${restaurant.name} — NewYorkTurkEats`;
+  const pageTitle = `${restaurant.name} - NewYorkTurkEats`;
   const pageDescription = metaDescriptionFor(restaurant);
   const pageUrl = `${SITE_URL}/restaurant.html?slug=${encodeURIComponent(restaurant.slug)}`;
   const shareImage =
