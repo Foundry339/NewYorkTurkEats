@@ -16,6 +16,11 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://newyorkturkeats.com/about.html</loc>
+    <lastmod>2026-08-12</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://newyorkturkeats.com/restaurant.html?slug=prung</loc>
     <lastmod>2026-07-09</lastmod>
     <priority>0.8</priority>

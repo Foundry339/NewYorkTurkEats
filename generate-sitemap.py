@@ -74,6 +74,7 @@ def build_sitemap(restaurants):
         (f"{SITE_URL}/", "1.0", today),
         (f"{SITE_URL}/map.html", "0.6", today),
         (f"{SITE_URL}/stats.html", "0.6", today),
+        (f"{SITE_URL}/about.html", "0.5", today),
     ]
     for r in restaurants:
         urls.append(
@@ -107,7 +108,7 @@ def main():
     xml = build_sitemap(restaurants)
     with open("sitemap.xml", "w", encoding="utf-8") as f:
         f.write(xml)
-    print(f"wrote sitemap.xml with {len(restaurants) + 3} URLs ({len(restaurants)} restaurants)")
+    print(f"wrote sitemap.xml with {len(restaurants) + 4} URLs ({len(restaurants)} restaurants)")
 
 
 if __name__ == "__main__":
