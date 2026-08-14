@@ -218,6 +218,10 @@ a {
     display: none;
   }
 
+  .header-right > .donate-btn {
+    display: none;
+  }
+
   .menu-toggle {
     display: inline-flex;
   }
