@@ -105,6 +105,29 @@ a {
   border-color: var(--border);
 }
 
+.donate-btn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0c0c0d;
+  background: var(--accent);
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.donate-btn:hover {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+}
+
+.mobile-nav .donate-btn {
+  justify-content: center;
+  margin-top: 4px;
+}
+
 .socials {
   display: flex;
   align-items: center;
