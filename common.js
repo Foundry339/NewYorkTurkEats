@@ -62,6 +62,28 @@ function mapEmbedUrl(address) {
   return `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
 }
 
+// Restaurant fields come from a public Google Sheet, so they're treated
+// as untrusted: escape before dropping into innerHTML, and restrict
+// links to http(s) before using them as an href.
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function safeUrl(str) {
+  if (!str) return "";
+  try {
+    const u = new URL(str, window.location.href);
+    return u.protocol === "http:" || u.protocol === "https:" ? u.href : "";
+  } catch {
+    return "";
+  }
+}
+
 // ---------- CSV data loading ----------
 
 function slugify(name) {

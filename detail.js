@@ -12,7 +12,7 @@ function videoSectionHtml(restaurant) {
     return `
       <div class="${frameClass}">
         <div class="video-placeholder">
-          No video linked yet. Add a Video Link for "${restaurant.name}"
+          No video linked yet. Add a Video Link for "${escapeHtml(restaurant.name)}"
           in the sheet to embed it here.
         </div>
       </div>
@@ -23,7 +23,7 @@ function videoSectionHtml(restaurant) {
     <div class="${frameClass}">
       <iframe
         src="${embed.url}"
-        title="${restaurant.name} video"
+        title="${escapeHtml(restaurant.name)} video"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
         loading="lazy"
@@ -47,7 +47,7 @@ function mapSectionHtml(restaurant) {
       ${mapFrame}
       <div class="address-card">
         <div class="label">Address</div>
-        <div class="value">${restaurant.address || "Address not added yet"}</div>
+        <div class="value">${restaurant.address ? escapeHtml(restaurant.address) : "Address not added yet"}</div>
         <a class="directions-link" href="${mapsLink}" target="_blank" rel="noopener">
           Get directions →
         </a>
@@ -207,21 +207,23 @@ async function render() {
     wideImage: shareImage !== DEFAULT_SHARE_IMAGE,
   });
 
+  const websiteUrl = safeUrl(restaurant.website);
+
   app.innerHTML = `
     <a class="back-link" href="index.html">← Back to directory</a>
 
     <div class="detail-header">
       <div>
-        <h1 class="detail-name">${restaurant.name}</h1>
+        <h1 class="detail-name">${escapeHtml(restaurant.name)}</h1>
         <div class="detail-meta">
-          <span class="pill">${restaurant.cuisine}</span>
-          <span class="pill">${restaurant.city}</span>
+          <span class="pill">${escapeHtml(restaurant.cuisine)}</span>
+          <span class="pill">${escapeHtml(restaurant.city)}</span>
           <span class="pill">Visited ${formatDate(restaurant.dateVisited)}</span>
         </div>
       </div>
       ${
-        restaurant.website
-          ? `<a class="site-btn" href="${restaurant.website}" target="_blank" rel="noopener">Visit Website ↗</a>`
+        websiteUrl
+          ? `<a class="site-btn" href="${escapeHtml(websiteUrl)}" target="_blank" rel="noopener">Visit Website ↗</a>`
           : ""
       }
     </div>
